@@ -3,6 +3,7 @@ import parser from '@babel/parser';
 import traverser from '@babel/traverse';
 import path from 'path';
 import ejs from 'ejs';
+import { transformFromAst } from '@babel/core';
 
 // 获取文件内容及其依赖文件
 function createAsset(filePath) {
@@ -20,14 +21,18 @@ function createAsset(filePath) {
   traverser.default(ast, {
     // import节点的visitor
     ImportDeclaration({ node }) {
-      const source = node.source.value;
-      deps.push(source);
+      const path = node.source.value;
+      deps.push(path);
     },
   });
 
+  // https://babel.dev/docs/babel-core#transformfromast
+  const { code } = transformFromAst(ast, null, { presets: ['env'] }); // 这个预设需要安装babel-preset-env
+  console.log('shen log: ', { code });
+
   return {
     filePath,
-    source,
+    source: code,
     deps,
   };
 }
