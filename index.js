@@ -2,9 +2,9 @@ import fs from 'fs';
 import parser from '@babel/parser';
 import traverser from '@babel/traverse';
 
-function createAsset() {
+function createAsset(filePath) {
   // 1.获取文件内容
-  const source = fs.readFileSync('./example/main.js', {
+  const source = fs.readFileSync(filePath, {
     encoding: 'utf-8',
   });
 
@@ -28,5 +28,4 @@ function createAsset() {
   };
 }
 
-const asset = createAsset();
-console.log('shen log: ', { asset });
+const asset = createAsset('./example/main.js');
