@@ -25,25 +25,29 @@ function createAsset(filePath) {
   });
 
   return {
+    filePath,
     source,
     deps,
   };
 }
 
-// 获取文件之间的依赖关系
+// 获取文件之间的依赖图关系（广度优先搜索）
 function createGraph(entry) {
   const entryAsset = createAsset(entry);
   const queue = [entryAsset];
 
-  const helper = (asset) => {
-    asset.deps.forEach((item) => {
-      const childAsset = createAsset(path.resolve('./example', item));
+  for (let i = 0; i < queue.length; i++) {
+    const asset = queue[i];
+    const { filePath, deps } = asset;
+    const dirPath = path.dirname(filePath);
+    deps.forEach((item) => {
+      const childAsset = createAsset(path.resolve(dirPath, item));
       queue.push(childAsset);
-      helper(childAsset);
     });
-  };
-  helper(entryAsset);
+  }
+
   return queue;
 }
 
 const graph = createGraph('./example/main.js');
+console.log('shen log: ', { graph });
