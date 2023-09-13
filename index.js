@@ -39,7 +39,7 @@ function createAsset(filePath) {
     code,
     deps,
     id,
-    mapping: {}
+    mapping: {},
   };
 }
 
@@ -63,12 +63,15 @@ function createGraph(entry) {
 }
 
 // 根据文件依赖图打包生成最终产物
-function build(graph) {
+function build(entry) {
+  const graph = createGraph(entry);
+
   const template = fs.readFileSync('./bundle.ejs', {
     encoding: 'utf-8',
   });
 
-  const code = ejs.render(template, { data: graph });
+  const code = ejs.render(template, { data: graph }); // 利用ejs进行模板填充
+
   const targetDir = './dist';
   if (fs.existsSync(targetDir))
     fs.rmdirSync(targetDir, {
@@ -81,5 +84,4 @@ function build(graph) {
   fs.writeFileSync('./dist/index.html', data);
 }
 
-const graph = createGraph('./example/main.js');
-build(graph);
+build('./example/main.js');
