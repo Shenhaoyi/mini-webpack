@@ -1,6 +1,6 @@
-import { bar } from './bar.js';
+// import { bar } from './bar.js';
 
-bar();
+// bar();
 
 export function foo() {
   console.log('foo.js');
