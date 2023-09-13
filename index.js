@@ -2,6 +2,7 @@ import fs from 'fs';
 import parser from '@babel/parser';
 import traverser from '@babel/traverse';
 import path from 'path';
+import ejs from 'ejs';
 
 // 获取文件内容及其依赖文件
 function createAsset(filePath) {
@@ -50,4 +51,20 @@ function createGraph(entry) {
 }
 
 const graph = createGraph('./example/main.js');
-console.log('shen log: ', { graph });
+
+function build(graph) {
+  const template = fs.readFileSync('./example/bundle.js', {
+    encoding: 'utf-8',
+  });
+
+  const code = ejs.render(template, {});
+
+  const targetDir = './dist';
+  if (fs.existsSync(targetDir))
+    fs.rmdirSync(targetDir, {
+      recursive: true, // 递归删除
+    });
+  fs.mkdirSync(targetDir);
+  fs.writeFileSync(`${targetDir}/bundle.js`, code);
+}
+build(graph);
