@@ -26,9 +26,9 @@ function createAsset(filePath) {
     },
   });
 
+  // ast转cjs代码
   // https://babel.dev/docs/babel-core#transformfromast
   const { code } = transformFromAst(ast, null, { presets: ['env'] }); // 这个预设需要安装babel-preset-env
-  console.log('shen log: ', { code });
 
   return {
     filePath,
