@@ -1,19 +1,31 @@
-// 不同模块的代码在一个文件中是如何运行的
-// 每个模块都用函数包裹，防止命名冲突
-// import 语法是需要顶层使用的，所以转换成cjs规范，需要自己实现require
+// 处理不同模块的代码在同一个文件中运行的问题：
+// 1、每个模块都用函数包裹，防止命名冲突
+// 2、import 语法是需要顶层使用的，所以转换成cjs规范，需要自己实现require
 
 const map = {
-  './foo.js': foojs,
+  './src/foo.js': foojs,
   './main.js': mainjs,
 };
 
-function mainjs() {
-  const foo = require('./src/foo.js');
+function require(filePath) {
+  const fn = map[filePath];
+  const module = {
+    exports: {},
+  };
+  // require供模块引用外部文件，module存放该模块导出内容
+  fn(require, module);
+  return module;
+}
+
+function mainjs(require, module) {
+  const {
+    exports: { foo },
+  } = require('./src/foo.js');
   foo();
   console.log('main.js');
 }
 
-function foojs() {
+function foojs(require, module) {
   function foo() {
     console.log('foo.js');
   }
@@ -21,3 +33,5 @@ function foojs() {
     foo,
   };
 }
+
+require('./main.js');
