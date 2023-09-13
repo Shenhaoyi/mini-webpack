@@ -1,7 +1,9 @@
 import fs from 'fs';
 import parser from '@babel/parser';
 import traverser from '@babel/traverse';
+import path from 'path';
 
+// 获取文件内容及其依赖文件
 function createAsset(filePath) {
   // 1.获取文件内容
   const source = fs.readFileSync(filePath, {
@@ -28,4 +30,20 @@ function createAsset(filePath) {
   };
 }
 
-const asset = createAsset('./example/main.js');
+// 获取文件之间的依赖关系
+function createGraph(entry) {
+  const entryAsset = createAsset(entry);
+  const queue = [entryAsset];
+
+  const helper = (asset) => {
+    asset.deps.forEach((item) => {
+      const childAsset = createAsset(path.resolve('./example', item));
+      queue.push(childAsset);
+      helper(childAsset);
+    });
+  };
+  helper(entryAsset);
+  return queue;
+}
+
+const graph = createGraph('./example/main.js');
