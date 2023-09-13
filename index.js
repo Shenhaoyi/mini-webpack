@@ -62,8 +62,7 @@ function createGraph(entry) {
   return queue;
 }
 
-const graph = createGraph('./example/main.js');
-
+// 根据文件依赖图打包生成最终产物
 function build(graph) {
   const template = fs.readFileSync('./bundle.ejs', {
     encoding: 'utf-8',
@@ -81,4 +80,6 @@ function build(graph) {
   const data = fs.readFileSync('./example/index.html');
   fs.writeFileSync('./dist/index.html', data);
 }
+
+const graph = createGraph('./example/main.js');
 build(graph);
