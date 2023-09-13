@@ -32,7 +32,7 @@ function createAsset(filePath) {
 
   return {
     filePath,
-    source: code,
+    code,
     deps,
   };
 }
@@ -58,11 +58,11 @@ function createGraph(entry) {
 const graph = createGraph('./example/main.js');
 
 function build(graph) {
-  const template = fs.readFileSync('./example/bundle.js', {
+  const template = fs.readFileSync('./example/bundle.ejs', {
     encoding: 'utf-8',
   });
 
-  const code = ejs.render(template, {});
+  const code = ejs.render(template, { data: graph });
 
   const targetDir = './dist';
   if (fs.existsSync(targetDir))

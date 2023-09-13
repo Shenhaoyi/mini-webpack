@@ -15,19 +15,10 @@
 
   require('./main.js');
 })({
-  './src/foo.js': function (require, module) {
-    function foo() {
-      console.log('foo.js');
-    }
-    module.exports = {
-      foo,
-    };
+  <%data.forEach(info=>{ %>
+  "<%- info["filePath"] %>": function (require, module) {
+  <%- info["code"]%>
   },
-  './main.js': function (require, module) {
-    const {
-      exports: { foo },
-    } = require('./src/foo.js');
-    foo();
-    console.log('main.js');
-  },
+  <% });%>
+
 });
