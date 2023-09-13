@@ -34,6 +34,7 @@ function createAsset(filePath) {
     filePath,
     code,
     deps,
+    id
   };
 }
 
@@ -58,7 +59,7 @@ function createGraph(entry) {
 const graph = createGraph('./example/main.js');
 
 function build(graph) {
-  const template = fs.readFileSync('./example/bundle.ejs', {
+  const template = fs.readFileSync('./bundle.ejs', {
     encoding: 'utf-8',
   });
 
