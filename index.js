@@ -5,6 +5,9 @@ import path from 'path';
 import ejs from 'ejs';
 import { transformFromAst } from '@babel/core';
 
+// 标记文件的id
+let id = 0;
+
 // 获取文件内容及其依赖文件
 function createAsset(filePath) {
   // 1.获取文件内容
@@ -30,11 +33,13 @@ function createAsset(filePath) {
   // https://babel.dev/docs/babel-core#transformfromast
   const { code } = transformFromAst(ast, null, { presets: ['env'] }); // 这个预设需要安装babel-preset-env
 
+  id++;
   return {
     filePath,
     code,
     deps,
-    id
+    id,
+    mapping: {}
   };
 }
 
@@ -49,6 +54,7 @@ function createGraph(entry) {
     const dirPath = path.dirname(filePath);
     deps.forEach((item) => {
       const childAsset = createAsset(path.resolve(dirPath, item));
+      asset.mapping[item] = childAsset.id; // 注意childAsset.fileName是绝对路径
       queue.push(childAsset);
     });
   }
@@ -64,7 +70,6 @@ function build(graph) {
   });
 
   const code = ejs.render(template, { data: graph });
-
   const targetDir = './dist';
   if (fs.existsSync(targetDir))
     fs.rmdirSync(targetDir, {
@@ -72,5 +77,8 @@ function build(graph) {
     });
   fs.mkdirSync(targetDir);
   fs.writeFileSync(`${targetDir}/bundle.js`, code);
+
+  const data = fs.readFileSync('./example/index.html');
+  fs.writeFileSync('./dist/index.html', data);
 }
 build(graph);

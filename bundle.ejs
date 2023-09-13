@@ -1,24 +1,22 @@
-// 处理不同模块的代码在同一个文件中运行的问题：
-// 1、每个模块都用函数包裹，防止命名冲突
-// 2、import 语法是需要顶层使用的，所以转换成cjs规范，需要自己实现require
-
 (function (modules) {
-  function require(filePath) {
-    const fn = modules[filePath];
+  function require(id) {
+    const [fn, mapping] = modules[id];
     const module = {
       exports: {},
     };
-    // require供模块引用外部文件，module存放该模块导出内容
-    fn(require, module);
+    function localRequire(filePath) {
+      const id = mapping[filePath];
+      return require(id);
+    }
+    fn(localRequire, module);
     return module;
   }
-
-  require('./main.js');
+  require(1);
 })({
   <%data.forEach(info=>{ %>
-  "<%- info["filePath"] %>": function (require, module) {
+  "<%- info["id"] %>": [function (require, exports) {
   <%- info["code"]%>
-  },
+  }, <%- JSON.stringify(info["mapping"]) %>],
   <% });%>
 
 });
