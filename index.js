@@ -5,9 +5,21 @@ import path from 'path';
 import ejs from 'ejs';
 import { transformFromAst } from '@babel/core';
 import config from './webpack.config.js';
+import { SyncHook } from 'tapable';
 
 // 标记文件的id
 let id = 0;
+
+// 事件hooks
+const hooks = {
+  afterBuild: new SyncHook(),
+};
+function initPlugins() {
+  config.plugins.forEach((plugin) => {
+    plugin.apply(hooks);
+  });
+}
+initPlugins();
 
 // 获取文件内容及其依赖文件
 function createAsset(filePath) {
@@ -92,8 +104,7 @@ function build(entry) {
   fs.mkdirSync(targetDir);
   fs.writeFileSync(`${targetDir}/bundle.js`, code);
 
-  const data = fs.readFileSync('./example/index.html');
-  fs.writeFileSync('./dist/index.html', data);
+  hooks.afterBuild.call();
 }
 
 build('./example/main.js');

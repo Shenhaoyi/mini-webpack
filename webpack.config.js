@@ -1,5 +1,8 @@
 import jsonLoader  from './loader/jsonLoader.js';
 import jsonLog from './loader/jsonLog.js';
+import HtmlPlugin from './plugin/htmlPlugin.js';
+import path from 'path';
+import process from 'process';
 
 export default {
   // entry: {
@@ -17,4 +20,10 @@ export default {
       },
     ],
   },
+  plugins: [
+    new HtmlPlugin({
+      filename: 'index.html',
+      template: path.resolve(process.cwd(), './example/index.html'),
+    }),
+  ],
 };
