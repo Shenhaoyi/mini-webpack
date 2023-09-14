@@ -19,9 +19,10 @@ function createAsset(filePath) {
   // loader
   const loaders = config.module.rules;
   loaders.forEach(({ test, use }) => {
+    const options = {};
     if (test.test(filePath)) {
       source = use.reverse().reduce((prev, curr) => {
-        return curr(prev);
+        return curr.call({ options }, prev);
       }, source);
     }
   });
