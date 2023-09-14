@@ -96,15 +96,16 @@ function build(entry) {
 
   const code = ejs.render(template, { data: graph }); // 利用ejs进行模板填充
 
-  const targetDir = './dist';
+  const { path: targetDir, filename: targetFilename } = config.output;
+
   if (fs.existsSync(targetDir))
     fs.rmdirSync(targetDir, {
       recursive: true, // 递归删除
     });
   fs.mkdirSync(targetDir);
-  fs.writeFileSync(`${targetDir}/bundle.js`, code);
+  fs.writeFileSync(`${targetDir}/${targetFilename}`, code);
 
   hooks.afterBuild.call();
 }
 
-build('./example/main.js');
+build(config.entry);
