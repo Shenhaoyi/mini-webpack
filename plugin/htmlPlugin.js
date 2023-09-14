@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import process from 'process';
 
 // 在dist中生成html文件
 export default class {

@@ -14,6 +14,7 @@ let id = 0;
 const hooks = {
   afterBuild: new SyncHook(['context']),
 };
+// 初始化插件，进行事件注册
 function initPlugins() {
   config.plugins.forEach((plugin) => {
     plugin.apply(hooks);
@@ -109,6 +110,7 @@ function build(entry) {
     outputDir: targetDir,
   };
 
+  // 触发事件
   hooks.afterBuild.call(context);
 }
 
