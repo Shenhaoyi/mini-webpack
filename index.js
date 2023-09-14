@@ -12,7 +12,7 @@ let id = 0;
 
 // 事件hooks
 const hooks = {
-  afterBuild: new SyncHook(),
+  afterBuild: new SyncHook(['context']),
 };
 function initPlugins() {
   config.plugins.forEach((plugin) => {
@@ -105,7 +105,11 @@ function build(entry) {
   fs.mkdirSync(targetDir);
   fs.writeFileSync(`${targetDir}/${targetFilename}`, code);
 
-  hooks.afterBuild.call();
+  const context = {
+    outputDir: targetDir,
+  };
+
+  hooks.afterBuild.call(context);
 }
 
 build(config.entry);

@@ -10,10 +10,10 @@ export default class {
   }
 
   apply(hooks) {
-    hooks.afterBuild.tap('html plugin', () => {
+    hooks.afterBuild.tap('html plugin', ({ outputDir }) => {
       console.log('html plugin');
       const data = fs.readFileSync(this.template);
-      fs.writeFileSync(path.resolve(process.cwd(), `./dist/${this.filename}`), data);
+      fs.writeFileSync(path.resolve(outputDir, this.filename), data);
     });
   }
 }
