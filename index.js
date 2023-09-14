@@ -4,6 +4,7 @@ import traverser from '@babel/traverse';
 import path from 'path';
 import ejs from 'ejs';
 import { transformFromAst } from '@babel/core';
+import config from './webpack.config.js';
 
 // 标记文件的id
 let id = 0;
@@ -11,8 +12,18 @@ let id = 0;
 // 获取文件内容及其依赖文件
 function createAsset(filePath) {
   // 1.获取文件内容
-  const source = fs.readFileSync(filePath, {
+  let source = fs.readFileSync(filePath, {
     encoding: 'utf-8',
+  });
+
+  // loader
+  const loaders = config.module.rules;
+  loaders.forEach(({ test, use }) => {
+    if (test.test(filePath)) {
+      source = use.reverse().reduce((prev, curr) => {
+        return curr(prev);
+      }, source);
+    }
   });
 
   // 2.获取依赖关系
