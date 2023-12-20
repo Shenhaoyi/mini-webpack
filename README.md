@@ -10,8 +10,7 @@
 npm ci
 ```
 
-
-以`./example/main.js`文件为入口文件，进行打包
+将`./example`文件夹以`./example/main.js`文件为入口，进行打包
 
 ```
 node index.js
